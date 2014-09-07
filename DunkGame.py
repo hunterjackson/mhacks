@@ -6,6 +6,12 @@ from twilio import twiml
 import pymongo
 import serial
 
+account_sid = "AC3cd63233915b26c3d44e56eacff88a50"
+auth_token  = "{{ 8708458a65649b1b7981e0588397904c }}"
+client = TwilioRestClient(account_sid, auth_token)
+
+
+
 ser=serial.Serial(port='COM4',timeout=3)
 s = 0
 while s != "\n":
@@ -78,9 +84,7 @@ def Dunk_Begin():
       else:
         pending =0
         score = score + 1
-
-
-  return score
+#end of game
 
   old_queue = queue.find_and_modify({}, {'$pop': {'queue': -1}})  # pop current off the queue
   player = old_queue['queue'][0] # use old queue to current player
@@ -90,9 +94,13 @@ def Dunk_Begin():
   #sms with score
   #response.message("you scored {0} points! your total score is {1}".format(score, player_profile['score']))
 
+  message = client.messages.create(body="you scored {0} points! your total score is {1}".format(score, player_profile['score']),
+      to= player_profile['user'],
+      from_="+19547408031")
+
+
 
 score = Dunk_Begin()
-print "Your total score is %d" % (score)
 
 if __name__ == "__main__":
     port = 5000
