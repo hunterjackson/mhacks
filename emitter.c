@@ -1,4 +1,4 @@
-/* YourDuinoStarter Example: nRF24L01 Transmit Joystick values
+/* YourDuinoStarter Example: nRF24L01 Transmit button values
  - WHAT IT DOES: Reads Analog values on A0, A1 and transmits
    them over a nRF24L01 Radio Link to another transceiver.
  - SEE the comments after "//" on each line below
@@ -13,11 +13,11 @@
    7 - MISO to Arduino pin 12
    8 - UNUSED
    - 
-   Analog Joystick or two 10K potentiometers:
+   Analog button or two 10K potentiometers:
    GND to Arduino GND
    VCC to Arduino +5V
-   X Pot to Arduino 02
-   Y Pot to Arduino 03
+   X Pot to Arduino A0
+   Y Pot to Arduino A1
    
  - V1.00 11/26/13
    Based on examples at http://www.bajdi.com/
@@ -31,10 +31,12 @@
 #define CE_PIN   9
 #define CSN_PIN 10
 
-#define button1 2
-#define button2 3
-#define button3 4
-#define button4 5
+
+const int button1 = 2;
+const int button2 = 3;
+const int button3 = 4;
+const int button4 = 5;
+const int button5 = 6;
 
 // NOTE: the "LL" at the end of the constant is "LongLong" type
 const uint64_t pipe = 0xE8E8F0F0E1LL; // Define the transmit pipe
@@ -42,31 +44,44 @@ const uint64_t pipe = 0xE8E8F0F0E1LL; // Define the transmit pipe
 
 /*-----( Declare objects )-----*/
 RF24 radio(CE_PIN, CSN_PIN); // Create a Radio
-
 /*-----( Declare Variables )-----*/
-int buttons[4];  // 4 element array holding buttons readings
+int button[5];  // 2 element array holding button readings
 
 void setup()   /****** SETUP: RUNS ONCE ******/
 {
   Serial.begin(9600);
   radio.begin();
   radio.openWritingPipe(pipe);
+  
+  // Set all buttons as input
+  pinMode(button1, INPUT);  
+  pinMode(button2, INPUT);
+  pinMode(button3, INPUT);
+  pinMode(button4, INPUT);
+  pinMode(button5, INPUT);
+  
 }//--(end setup )---
 
 
 void loop()   /****** LOOP: RUNS CONSTANTLY ******/
 {
-  buttons[0] = digitalRead(button1);
-  buttons[1] = digitalRead(button2);
-  buttons[2] = digitalRead(button3);
-  buttons[3] = digitalRead(button4);
+ // button[0] = digitalRead(button_X);
+  button[0] = digitalRead(button1);
+  button[1] = digitalRead(button2);
+  button[2] = digitalRead(button3);
+  button[3] = digitalRead(button4);
+  button[4] = digitalRead(button5);
   
-  Serial.print(buttons[0]);
-  Serial.print(buttons[1]);
-  Serial.print(buttons[2]);
-  Serial.println(buttons[3]);
   
-  radio.write( buttons, sizeof(buttons) );
+  // Print serial 
+  Serial.print(button[0]);
+  Serial.print(button[1]);
+  Serial.print(button[2]);
+  Serial.print(button[3]);
+  Serial.println(button[4]);
+  
+  // Send state of all the buttons to receiver
+  radio.write( button, sizeof(button) );
 
 }//--(end main loop )---
 
@@ -74,4 +89,3 @@ void loop()   /****** LOOP: RUNS CONSTANTLY ******/
 
 //NONE
 //*********( THE END )***********
-
