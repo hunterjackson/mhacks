@@ -34,7 +34,7 @@ const uint64_t pipe = 0xE8E8F0F0E1LL; // Define the transmit pipe
 /*-----( Declare objects )-----*/
 RF24 radio(CE_PIN, CSN_PIN); // Create a Radio
 /*-----( Declare Variables )-----*/
-int buttons[2];  // 2 element array holding buttons readings
+int buttons[4];  // 2 element array holding buttons readings
 
 void setup()   /****** SETUP: RUNS ONCE ******/
 {
@@ -57,10 +57,10 @@ void loop()   /****** LOOP: RUNS CONSTANTLY ******/
     {
       // Fetch the data payload
       done = radio.read( buttons, sizeof(buttons) );
-      Serial.print("X = ");
       Serial.print(buttons[0]);
-      Serial.print(" Y = ");      
-      Serial.println(buttons[1]);
+      Serial.print(buttons[1]);
+      Serial.print(buttons[2]);      
+      Serial.println(buttons[3]);
     }
   }
   else
@@ -74,4 +74,3 @@ void loop()   /****** LOOP: RUNS CONSTANTLY ******/
 
 //NONE
 //*********( THE END )**********
-
