@@ -82,6 +82,18 @@ def Dunk_Begin():
 
   return score
 
+  old_queue = queue.find_and_modify({}, {'$pop': {'queue': -1}})  # pop current off the queue
+  player = old_queue['queue'][0] # use old queue to current player
+
+  player_profile = profiles.find_and_modify({'user': player}, {'$inc': { 'score': score }}, new=True)
+
+  #sms with score
+  #response.message("you scored {0} points! your total score is {1}".format(score, player_profile['score']))
+
+
+score = Dunk_Begin()
+print "Your total score is %d" % (score)
+
 if __name__ == "__main__":
     port = 5000
     app.debug = True
