@@ -61,6 +61,7 @@ void loop()   /****** LOOP: RUNS CONSTANTLY ******/
       Serial.print(buttons[1]);
       Serial.print(buttons[2]);      
       Serial.println(buttons[3]);
+      Serial.println(buttons[4]);
     }
   }
   else
