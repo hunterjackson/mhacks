@@ -1,21 +1,23 @@
 
 from flask import Flask
 from flask import request
-
+from twilio.rest import TwilioRestClient
 from twilio import twiml
 import pymongo
 import serial
 
+# Account information for Twilio
 account_sid = "AC3cd63233915b26c3d44e56eacff88a50"
 auth_token  = "{{ 8708458a65649b1b7981e0588397904c }}"
 client = TwilioRestClient(account_sid, auth_token)
 
 
+# Connect to arduino serial
+ser = serial.Serial('/dev/tty.usbserial-DA00VJER', 9600)
 
-ser=serial.Serial(port='COM4',timeout=3)
 s = 0
 while s != "\n":
-  s=ser.read(1)
+  s = ser.read(1)
 
 dbname = 'mhacks'
 client = pymongo.MongoClient(host='localhost', port=27017)
@@ -25,7 +27,6 @@ queue = db['queue']
 
 
 app = Flask(__name__, static_url_path='/static')
-
 
 @app.route('/sms', methods=['POST'])
 def sms():
@@ -91,15 +92,11 @@ def Dunk_Begin():
 
   player_profile = profiles.find_and_modify({'user': player}, {'$inc': { 'score': score }}, new=True)
 
-  #sms with score
-  #response.message("you scored {0} points! your total score is {1}".format(score, player_profile['score']))
-
+  # Send message with total score
   message = client.messages.create(body="you scored {0} points! your total score is {1}".format(score, player_profile['score']),
       to= player_profile['user'],
       from_="+19547408031")
-
-
-
+# Call game and save result to score
 score = Dunk_Begin()
 
 if __name__ == "__main__":
